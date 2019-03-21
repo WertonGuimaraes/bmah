@@ -24,12 +24,15 @@ def create_app(config, debug=False, testing=False, config_overrides=None):
 
     # Register the Bookshelf CRUD blueprint.
     from .items import items
+    from .scraping import get_info_day
     app.register_blueprint(items, url_prefix='/items')
+    app.register_blueprint(get_info_day, url_prefix='/getinfoday')
 
     # Add a default root route.
     @app.route("/")
     def index():
         return redirect(url_for('items.list'))
+
 
     # Add an error handler. This is useful for debugging the live application,
     # however, you should disable the output of the exception for production

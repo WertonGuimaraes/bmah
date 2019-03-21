@@ -1,11 +1,13 @@
+# The configuration use "cloud scheduler".
+# run every day (at 4 a.m. gmt) make a post on https://wow-black-market.appspot.com/getinfoday/
+
 import requests
 import lxml.html as lh
 import datetime
 import time
 
-import bmah
-import config
 from bmah import get_model
+from flask import Blueprint, render_template, request
 
 
 def get_info(server_name, date):
@@ -29,7 +31,7 @@ def get_info(server_name, date):
     for item in items_xpath:
         item_id = item.get("data-item")
         item_name = item.get("title")
-        items.append({"item_id": item_id, "item_name": item_name, "date": date})
+        items.append({"server_name": server_name, "item_id": item_id, "item_name": item_name, "date": date})
 
     return items
 
@@ -67,15 +69,24 @@ us_server = ['Aegwynn', 'Aerie-Peak', 'Agamaggan', 'Aggramar', 'Akama', 'Alexstr
              'Ursin', 'Uther', 'Vashj', "Veknilash", 'Velen', 'Warsong', 'Whisperwind', 'Wildhammer', 'Windrunner',
              'Winterhoof', 'Wyrmrest-Accord', 'Ysera', 'Ysondre', 'Zangarmarsh', "Zuljin", 'Zuluhed']
 
-app = bmah.create_app(config)
-
-location_server = (("us", us_server),)
+us_server = ['Azralon']
+locations_server = (("us", us_server),)
 date = datetime.datetime.now().strftime("%Y%m%d")
+get_info_day = Blueprint('getinfoday', __name__)
 
-for location_server, servers in location_server:
-    for server in servers:
-        server_name = "%s-%s" % (location_server, server)
-        items = get_info(server_name, date)
-        for item in items:
-            with app.app_context():
+
+def save_on_database():
+    for location_server, servers in locations_server:
+        for server in servers:
+            server_name = "%s-%s" % (location_server, server)
+            items = get_info(server_name, date)
+            print(items)
+            for item in items:
                 get_model().create(item)
+
+
+@get_info_day.route('/', methods=['POST'])
+def get():
+    save_on_database()
+    return "posted"
+

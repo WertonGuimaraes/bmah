@@ -53,7 +53,6 @@ def list(limit=10, cursor=None):
     ds = get_client()
 
     query = ds.query(kind='Items', order=['date'])
-    print(query)
     query_iterator = query.fetch(limit=limit, start_cursor=cursor)
     page = next(query_iterator.pages)
 
@@ -81,9 +80,7 @@ def update(data, id=None):
     else:
         key = ds.key('Items')
 
-    entity = datastore.Entity(
-        key=key,
-        exclude_from_indexes=['description'])
+    entity = datastore.Entity(key=key)
 
     entity.update(data)
     ds.put(entity)
