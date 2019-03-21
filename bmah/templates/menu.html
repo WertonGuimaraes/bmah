@@ -16,23 +16,17 @@
 
 {% block content %}
 
+<select name="serverlist" form="serverform">
+  {% for server in servers %}
+      <option value={{server}}>{{server}}</option>
+  {% endfor %}
+</select>
 
-{% for item in items %}
-<div class="media">
-  <a href="https://www.wowhead.com/item={{item.item_id}}">
-      <h4>{{item.item_name}}</h4>
-  </a>
-</div>
-{% else %}
-<p>No items found</p>
-{% endfor %}
+<br>
 
-{% if next_page_token %}
-<nav>
-  <ul class="pager">
-    <li><a href="?page_token={{next_page_token}}">More</a></li>
-  </ul>
-</nav>
-{% endif %}
+<form method="POST" enctype="multipart/form-data" id="serverform">
+  <button type="submit" class="btn btn-success">Save</button>
+</form>
+
 
 {% endblock %}
