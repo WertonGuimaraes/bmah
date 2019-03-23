@@ -14,17 +14,28 @@
 # limitations under the License.
 #}
 
+{% extends "base.html" %}
+
 {% block content %}
+
+<h1>Wow Black Market - {{server_name}}</h1>
+
 
 
 {% for item in items %}
-<div class="media">
+    {% if loop.first == true %}
+        {{item.date[6:]}}/{{item.date[4:6]}}/{{item.date[:4]}}<br>
+    {% else %}
+        {% if items[loop.index0 - 1].date != item.date %}
+            <br>{{item.date[6:]}}/{{item.date[4:6]}}/{{item.date[:4]}}<br>
+        {% endif %}
+    {% endif %}
+
   <a href="https://www.wowhead.com/item={{item.item_id}}">
-      <h4>{{item.item_name}}</h4>
+      {{item.item_name}}<br>
   </a>
-</div>
-{% else %}
-<p>No items found</p>
+  {% else %}
+  <p>No items found</p>
 {% endfor %}
 
 {% if next_page_token %}
@@ -34,5 +45,7 @@
   </ul>
 </nav>
 {% endif %}
+
+
 
 {% endblock %}

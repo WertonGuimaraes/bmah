@@ -52,7 +52,7 @@ def from_datastore(entity):
 def list(table, limit=10, cursor=None):
     ds = get_client()
 
-    query = ds.query(kind=table, order=['date'])
+    query = ds.query(kind=table, order=['-date'])
     query_iterator = query.fetch(limit=limit, start_cursor=cursor)
     page = next(query_iterator.pages)
 
@@ -63,6 +63,10 @@ def list(table, limit=10, cursor=None):
 
     return entities, next_cursor
 # [END list]
+
+
+def get_dates(table):
+    return [i['date'] for i in get_client().query(kind=table, distinct_on=['date'], projection=['date']).fetch()]
 
 
 def read(table, id):

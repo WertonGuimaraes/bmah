@@ -14,6 +14,8 @@
 # limitations under the License.
 #}
 
+{% extends "base.html" %}
+
 {% block content %}
 
 <select name="serverlist" form="serverform">
@@ -22,10 +24,10 @@
   {% endfor %}
 </select>
 
-<br>
+<br><br>
 
 <form method="POST" enctype="multipart/form-data" id="serverform">
-  <button type="submit" class="btn btn-success">Save</button>
+  <button type="submit" class="btn btn-success">Search</button>
 </form>
 
 
