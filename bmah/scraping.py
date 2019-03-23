@@ -8,8 +8,17 @@ import time
 
 from bmah import get_model
 from flask import Blueprint, render_template, request
+import threading
 
 from constants import SERVERS
+
+
+class GetInfoThread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run(self):
+        save_on_database()
 
 
 def get_info(server_name, date):
@@ -43,16 +52,20 @@ get_info_day = Blueprint('getinfoday', __name__)
 
 
 def save_on_database():
+    from main import app
     for server_name in SERVERS:
         items = get_info(server_name, date)
         print(items)
         for item in items:
             print(server_name)
-            get_model().create(server_name, item)
+            with app.app_context():
+                get_model().create(server_name, item)
 
 
 @get_info_day.route('/', methods=['GET', 'POST'])
 def get():
     if request.method == 'POST':
-        save_on_database()
+        thread1 = GetInfoThread()
+        thread1.start()
+        return thread1.name
     return render_template("post.html", action="Add", book={})
